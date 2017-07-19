@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+        <meta content="yes" name="apple-mobile-web-app-capable">
+        <meta content="yes" name="apple-touch-fullscreen">
+        <meta content="black" name="apple-mobile-web-app-status-bar-style">
+        <meta content="telephone=no,email=no" name="format-detection">
+        <meta name="description" content="安小天描述">
+        <meta name="keywords" content="安小天关键字">
+        <title>安小天</title>
+        <link rel="stylesheet" href="./static/style/style.css">
+        <script src="./static/script/lib/jquery.2.0.0.min.js"></script>
+        <script src="./static/script/common.js"></script>
+        <script>
+            window.requireLogin = true;
+        </script>
+        <script src="./static/script/check.js"></script>
+    </head>
+
+    <body class="flex-v">
+
+        <header class="header">
+            <div class="wrapper">
+                <a href="./index.html" class="logo">安小天</a>
+                <a href="javascript:void(0);" class="btn-nav">
+                    <span class="line line-1"></span>
+                    <span class="line line-2"></span>
+                </a>
+            </div>
+
+            <div class="menu">
+                <nav class="nav">
+                    <ul>
+                        <li><a href="./EH330.html">悬挂式</a></li>
+                        <li><a href="./M6P.html">通用型</a></li>
+                        <li><a href="./V92.html">流媒体</a></li>
+                        <li><a href="./YJ801.html">便捷式</a></li>
+                        <li><a href="./help.html">帮助中心</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        
+        <div class="main flex-a-i flex-v">
+            <section class="pay-result flex-a-i">
+                <div class="status">
+                    <p class="succ">恭喜您购买成功</p>
+                </div>
+                
+                <div class="info">
+                    <div class="info-box">
+                        <!-- <p>购买商品：<a href="./EH330.html" target="_blank">悬挂式智能后视镜</a></p>
+                        <p>付款金额：<span>￥1999</span></p>
+                        <p><a href="./detail.html?id=xxxxx">订单详情</a></p> -->
+                    </div>
+                </div>
+
+                <div class="download">
+                    <div class="qrCode-box">
+                        <img src="./static/images/qrcode_car.jpg">
+                    </div>
+                    <h1>下载偶滴车App</h1>
+                    <h2>您的随行车管家</h2>
+                </div>
+            </section>
+            
+
+            <footer class="footer">
+                <div class="container clearfix">
+                    <!-- <div class="wechat-account">
+                        <div class="img-wrapper"><img src="xxxxxxxxxxxx.jpg"></div>
+                        <p class="text">微信公众号</p>
+                    </div> -->
+
+                    <div class="info">
+                        <p class="title">服务热线 <a href="tel:4008292178" class="telephone">400-8292-178</a></p>
+                        <p class="copyright">&copy;2014 江苏天安智联科技股份有限公司</p>
+                        <p class="copyright"><a href="http://www.miitbeian.gov.cn" style="color: #8f8e94;">苏ICP备15000165号</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <script src="./static/script/axt.js"></script>
+
+        <script>
+            $(function() {
+                var RESULT = {
+                    init: function() {
+                        var prodID = COMMON.getQueryString('goodsId'),
+                            orderID = COMMON.getQueryString('outTradeNo'),
+                            str = '';
+
+                        for(var i = 0; i < COMMON.prodList.length; i++) {
+                            if(prodID == COMMON.prodList[i].id) {
+                                var name = COMMON.prodList[i].name,
+                                    price = COMMON.prodList[i].price,
+                                    url = COMMON.prodList[i].url;
+
+                                str += '<p>购买商品：<a href="'+ url +'">'+ name +'</a></p>';
+                                str += '<p>付款金额：<span>￥'+ price +'</span></p>';
+                                str += '<p><a href="./detail.html?id='+ orderID +'">订单详情</a></p>';
+
+                                $('.info .info-box').html(str);
+                            }
+                        }
+                    }
+                };
+
+                RESULT.init();
+            });
+        </script>
+    </body>
+</html>
+

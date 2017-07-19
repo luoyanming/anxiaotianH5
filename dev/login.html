@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+        <meta content="yes" name="apple-mobile-web-app-capable">
+        <meta content="yes" name="apple-touch-fullscreen">
+        <meta content="black" name="apple-mobile-web-app-status-bar-style">
+        <meta content="telephone=no,email=no" name="format-detection">
+        <meta name="description" content="安小天描述">
+        <meta name="keywords" content="安小天关键字">
+        <title>安小天</title>
+        <link rel="stylesheet" href="./static/style/style.css">
+        <script src="./static/script/lib/jquery.2.0.0.min.js"></script>
+        <script src="./static/script/common.js"></script>
+        <script>
+            window.requireLogin = false;
+        </script>
+        <script src="./static/script/check.js"></script>
+    </head>
+
+    <body class="flex-v">
+
+        <header class="header">
+            <div class="wrapper">
+                <a href="./index.html" class="logo">安小天</a>
+                <a href="javascript:void(0);" class="btn-nav">
+                    <span class="line line-1"></span>
+                    <span class="line line-2"></span>
+                </a>
+            </div>
+
+            <div class="menu">
+                <nav class="nav">
+                    <ul>
+                        <li><a href="./EH330.html">悬挂式</a></li>
+                        <li><a href="./M6P.html">通用型</a></li>
+                        <li><a href="./V92.html">流媒体</a></li>
+                        <li><a href="./YJ801.html">便捷式</a></li>
+                        <li><a href="./help.html">帮助中心</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        
+        <div class="main flex-a-i flex-v">
+            <section class="form flex-a-i">
+                <div class="title">登录</div>
+
+                <div class="form-wrapper">
+                    <div class="input-box">
+                        <!-- <input type="text" class="input input-error" placeholder="输入手机号"> -->
+                        <input type="text" class="input input-mobile" placeholder="输入手机号">
+                    </div>
+                    <div class="errMsg errMsg-mobile"></div>
+
+                    <div class="input-box">
+                        <input type="password" class="input input-pwd" placeholder="输入密码（6-16位）">
+                    </div>
+                    <div class="errMsg errMsg-pwd"></div>
+                </div>
+
+                <div class="forget"><a href="./forget.html">忘记密码？</a></div>
+
+                <a href="javascript:void(0);" class="btn-submit">登录</a>
+
+                <div class="tips">没有账号？<a href="./register.html">注册</a></div>
+            </section>
+            
+
+            <footer class="footer">
+                <div class="container clearfix">
+                    <!-- <div class="wechat-account">
+                        <div class="img-wrapper"><img src="xxxxxxxxxxxx.jpg"></div>
+                        <p class="text">微信公众号</p>
+                    </div> -->
+
+                    <div class="info">
+                        <p class="title">服务热线 <a href="tel:4008292178" class="telephone">400-8292-178</a></p>
+                        <p class="copyright">&copy;2014 江苏天安智联科技股份有限公司</p>
+                        <p class="copyright"><a href="http://www.miitbeian.gov.cn" style="color: #8f8e94;">苏ICP备15000165号</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <script src="./static/script/axt.js"></script>
+
+        <script>
+            $(function() {
+                var form = $('.form'),
+                    btnSubmit = form.find('.btn-submit'),
+                    submitFlag = true;
+
+                var inputMobile = $('.input-mobile'),
+                    inputPwd = $('.input-pwd');
+
+                var errMsgMobile = $('.errMsg-mobile'),
+                    errMsgPwd = $('.errMsg-pwd');
+
+                var LOGIN = {
+                    init: function(){
+                        LOGIN.btnSubmitBind();
+                    },
+                    btnSubmitBind: function() {
+                        btnSubmit.on('click', function() {
+                            if(!submitFlag) {
+                                return false;
+                            }
+                            submitFlag = false;
+
+                            // remove error
+                            inputMobile.removeClass('input-error');
+                            errMsgMobile.html('');
+                            inputPwd.removeClass('input-error');
+                            errMsgPwd.html('');
+
+                            // validate
+                            if(!COMMON.validate.checkNull(inputMobile.val())) {
+                                errMsgMobile.html('手机号码不能为空！');
+                                inputMobile.addClass('input-error');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            if(!COMMON.validate.checkMobile(inputMobile.val())) {
+                                errMsgMobile.html('手机号码格式不正确！');
+                                inputMobile.addClass('input-error');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            if(!COMMON.validate.checkNull(inputPwd.val())) {
+                                errMsgPwd.html('登录密码不能为空！');
+                                inputPwd.addClass('input-error');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            if(!COMMON.validate.checkPass(inputPwd.val())) {
+                                errMsgPwd.html('请输入6-16位密码！');
+                                inputPwd.addClass('input-error');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            btnSubmit.html('正在登录...');
+
+                            $.ajax({
+                                url: BASEURL + '/doLogin',
+                                dataType: "json",
+                                type: "post",
+                                data: {
+                                    mobile: inputMobile.val(),
+                                    password: inputPwd.val()
+                                },
+                                success:function(data) {
+                                    btnSubmit.html('登录');
+                                    submitFlag = true;
+
+                                    if(data.code == 0) {
+                                        var redirecturl = COMMON.getQueryString('redirecturl');
+                                        
+                                        localStorage.setItem('mobile', inputMobile.val());
+
+                                        if(redirecturl) {
+                                            window.location.href = redirecturl;
+                                        } else {
+                                            window.location.href = './index.html';
+                                        }
+                                    } else {
+                                        errMsgPwd.html(data.msg);
+                                    }
+                                },
+                                error: function() {
+                                    btnSubmit.html('登录');
+                                    submitFlag = true;
+                                    errMsgPwd.html('登录遇到未知问题！请重试！');
+                                }
+                            });
+
+                        });
+                    }
+                };
+
+                LOGIN.init();
+            });
+        </script>
+    </body>
+</html>
+

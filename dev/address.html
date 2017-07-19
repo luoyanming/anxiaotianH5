@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+        <meta content="yes" name="apple-mobile-web-app-capable">
+        <meta content="yes" name="apple-touch-fullscreen">
+        <meta content="black" name="apple-mobile-web-app-status-bar-style">
+        <meta content="telephone=no,email=no" name="format-detection">
+        <meta name="description" content="安小天描述">
+        <meta name="keywords" content="安小天关键字">
+        <title>安小天</title>
+        <link rel="stylesheet" href="./static/style/style.css">
+        <script src="./static/script/lib/jquery.2.0.0.min.js"></script>
+        <script src="./static/script/common.js"></script>
+        <script>
+            window.requireLogin = true;
+        </script>
+        <script src="./static/script/check.js"></script>
+    </head>
+
+    <body class="flex-v">
+
+        <header class="header">
+            <div class="wrapper">
+                <a href="./index.html" class="logo">安小天</a>
+                <a href="javascript:void(0);" class="btn-nav">
+                    <span class="line line-1"></span>
+                    <span class="line line-2"></span>
+                </a>
+            </div>
+
+            <div class="menu">
+                <nav class="nav">
+                    <ul>
+                        <li><a href="./EH330.html">悬挂式</a></li>
+                        <li><a href="./M6P.html">通用型</a></li>
+                        <li><a href="./V92.html">流媒体</a></li>
+                        <li><a href="./YJ801.html">便捷式</a></li>
+                        <li><a href="./help.html">帮助中心</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        
+        <div class="main flex-a-i flex-v">
+            <section class="address-form flex-a-i">
+                <div class="form-wrapper">
+                    <div class="item-block flex-h">
+                        <div class="flex-v-c">
+                            <span>详细地址</span>
+                        </div>
+                        <div class="flex-a-i">
+                            <textarea class="textarea input-addr" placeholder="建议您如实填写详细收货地址，例如街道名称，门牌号码，楼层和房间号等信息"></textarea>
+                            <div class="errMsg errMsg-addr"></div>
+                        </div>
+                    </div>
+                    <div class="item-block flex-h">
+                        <div class="flex-v-c">
+                            <span>收货人姓名</span>
+                        </div>
+                        <div class="flex-a-i">
+                            <input type="text" class="input input-name" placeholder="长度不超过25个字符">
+                            <div class="errMsg errMsg-name"></div>
+                        </div>
+                    </div>
+                    <div class="item-block flex-h">
+                        <div class="flex-v-c">
+                            <span>手机号码</span>
+                        </div>
+                        <div class="flex-a-i">
+                            <input type="text" class="input input-mobile" placeholder="请输入手机号码">
+                            <div class="errMsg errMsg-mobile"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="javascript:void(0);" class="btn-submit">保存</a>
+            </section>
+            
+
+            <footer class="footer">
+                <div class="container clearfix">
+                    <!-- <div class="wechat-account">
+                        <div class="img-wrapper"><img src="xxxxxxxxxxxx.jpg"></div>
+                        <p class="text">微信公众号</p>
+                    </div> -->
+
+                    <div class="info">
+                        <p class="title">服务热线 <a href="tel:4008292178" class="telephone">400-8292-178</a></p>
+                        <p class="copyright">&copy;2014 江苏天安智联科技股份有限公司</p>
+                        <p class="copyright"><a href="http://www.miitbeian.gov.cn" style="color: #8f8e94;">苏ICP备15000165号</a></p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <script src="./static/script/axt.js"></script>
+
+        <script>
+            $(function() {
+                var inputAddr = $('.input-addr'),
+                    inputName = $('.input-name'),
+                    inputMobile = $('.input-mobile'),
+                    btnSubmit = $('.btn-submit'),
+                    submitFlag = true;
+
+                var errMsgAddr = $('.errMsg-addr'),
+                    errMsgName = $('.errMsg-name'),
+                    errMsgMobile = $('.errMsg-mobile');
+
+                var ADDRESS = {
+                    init: function() {
+                        ADDRESS.getAddr();
+                        ADDRESS.btnSubmitBind();
+                    },
+                    getAddr: function() {
+                        if(!COMMON.getQueryString('id')) {
+                            return false;
+                        }
+
+                        $.ajax({
+                            url: BASEURL + '/getMemberAddress',
+                            dataType: "json",
+                            type: "post",
+                            data: {
+                                id: COMMON.getQueryString('id')
+                            },
+                            success:function(data) {
+                                if(data.code == 10003) {
+                                    return false;
+                                } else if(data.code == 0) {
+                                    inputAddr.val(data.data.memberAddress.address);
+                                    inputName.val(data.data.memberAddress.receiverName);
+                                    inputMobile.val(data.data.memberAddress.receiverMobile);
+                                } else {
+                                    alert(data.msg);
+                                    window.location.href = window.location.href;
+                                }
+                            },
+                            error: function() {
+                                alert('获取收货地址失败！请重试！');
+                                window.location.href = window.location.href;
+                            }
+                        });
+                    },
+                    btnSubmitBind: function() {
+                        btnSubmit.on('click', function() {
+                            if(!submitFlag) {
+                                return false;
+                            }
+                            submitFlag = false;
+
+                            // remove error
+                            errMsgAddr.html('');
+                            errMsgName.html('');
+                            errMsgMobile.html('');
+
+                            // validate
+                            if(!COMMON.validate.checkNull(inputAddr.val())) {
+                                errMsgAddr.html('请填写详细地址！');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            if(!COMMON.validate.checkNull(inputName.val())) {
+                                errMsgName.html('请填写收货人姓名！');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            if(!COMMON.validate.checkNull(inputMobile.val())) {
+                                errMsgMobile.html('请填写手机号码！');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            if(!COMMON.validate.checkMobile(inputMobile.val())) {
+                                errMsgMobile.html('手机号码格式不正确！');
+                                submitFlag = true;
+                                return false;
+                            }
+
+                            btnSubmit.html('正在保存...');
+
+                            if(COMMON.getQueryString('id')) {
+                                // modify addr
+
+                                $.ajax({
+                                    url: BASEURL + '/modifyMemberAddress',
+                                    dataType: "json",
+                                    type: "post",
+                                    data: {
+                                        id: COMMON.getQueryString('id'),
+                                        address: inputAddr.val(),
+                                        name: inputName.val(),
+                                        mobile: inputMobile.val(),
+                                        isDefault: 1
+                                    },
+                                    success:function(data) {
+                                        btnSubmit.html('保存');
+                                        submitFlag = true;
+
+                                        if(data.code == 10003) {
+                                            return false;
+                                        } else if(data.code == 0) {
+                                            window.location.href = './buy.html?id=' + COMMON.getQueryString('prodid');
+                                        } else {
+                                            errMsgMobile.html(data.msg);
+                                        }
+                                    },
+                                    error: function() {
+                                        btnSubmit.html('保存');
+                                        submitFlag = true;
+                                        errMsgPwd.html('保存收货地址失败！请重试！');
+                                    }
+                                });
+                            } else {
+                                // add addr
+
+                                $.ajax({
+                                    url: BASEURL + '/saveMemberAddress',
+                                    dataType: "json",
+                                    type: "post",
+                                    data: {
+                                        address: inputAddr.val(),
+                                        name: inputName.val(),
+                                        mobile: inputMobile.val(),
+                                        isDefault: 1
+                                    },
+                                    success:function(data) {
+                                        btnSubmit.html('保存');
+                                        submitFlag = true;
+
+                                        if(data.code == 10003) {
+                                            return false;
+                                        } else if(data.code == 0) {
+                                            window.location.href = './buy.html?id=' + COMMON.getQueryString('prodid');
+                                        } else {
+                                            errMsgMobile.html(data.msg);
+                                        }
+                                    },
+                                    error: function() {
+                                        btnSubmit.html('保存');
+                                        submitFlag = true;
+                                        errMsgPwd.html('保存收货地址失败！请重试！');
+                                    }
+                                });
+                            }
+                        });
+                    }
+                };
+
+                ADDRESS.init();
+            });
+        </script>
+    </body>
+</html>
+
